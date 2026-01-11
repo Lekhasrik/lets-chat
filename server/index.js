@@ -1,38 +1,143 @@
+// import express from "express";
+// import cors from "cors";
+// import dotenv from "dotenv";
+// import { Server } from "socket.io";
+
+// import "./config/mongo.js";
+
+// import { VerifyToken, VerifySocketToken } from "./middlewares/VerifyToken.js";
+// import chatRoomRoutes from "./routes/chatRoom.js";
+// import chatMessageRoutes from "./routes/chatMessage.js";
+// import userRoutes from "./routes/user.js";
+
+// const app = express();
+
+// dotenv.config();
+
+// app.use(cors());
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: false }));
+
+// app.use(VerifyToken);
+
+// const PORT = process.env.PORT || 8080;
+
+// app.use("/api/room", chatRoomRoutes);
+// app.use("/api/message", chatMessageRoutes);
+// app.use("/api/user", userRoutes);
+
+// const server = app.listen(PORT, () => {
+//   console.log(`Server listening on port ${PORT}`);
+// });
+
+// const io = new Server(server, {
+//   cors: {
+//     origin: "http://localhost:3000",
+//     credentials: true,
+//   },
+// });
+
+// io.use(VerifySocketToken);
+
+// global.onlineUsers = new Map();
+
+// const getKey = (map, val) => {
+//   for (let [key, value] of map.entries()) {
+//     if (value === val) return key;
+//   }
+// };
+
+// io.on("connection", (socket) => {
+//   global.chatSocket = socket;
+
+//   socket.on("addUser", (userId) => {
+//     onlineUsers.set(userId, socket.id);
+//     socket.emit("getUsers", Array.from(onlineUsers));
+//   });
+
+//   socket.on("sendMessage", ({ senderId, receiverId, message }) => {
+//     const sendUserSocket = onlineUsers.get(receiverId);
+//     if (sendUserSocket) {
+//       socket.to(sendUserSocket).emit("getMessage", {
+//         senderId,
+//         message,
+//       });
+//     }
+//   });
+
+//   socket.on("disconnect", () => {
+//     onlineUsers.delete(getKey(onlineUsers, socket.id));
+//     socket.emit("getUsers", Array.from(onlineUsers));
+//   });
+// });
+
+
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import { Server } from "socket.io";
 
-import "./config/mongo.js";
+import "./config/mongo.js"; // Mongo connection
+import auth from "./config/firebase-config.js"; // Firebase admin
 
 import { VerifyToken, VerifySocketToken } from "./middlewares/VerifyToken.js";
 import chatRoomRoutes from "./routes/chatRoom.js";
 import chatMessageRoutes from "./routes/chatMessage.js";
 import userRoutes from "./routes/user.js";
 
-const app = express();
-
 dotenv.config();
 
-app.use(cors());
+const app = express();
+
+// Middleware
+// app.use(cors());
+
+app.use(
+  cors({
+    origin: "http://localhost:3002",
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use(VerifyToken);
+// app.use(VerifyToken);
 
-const PORT = process.env.PORT || 8080;
+// // Routes
+// app.use("/api/room", chatRoomRoutes);
+// app.use("/api/message", chatMessageRoutes);
+// app.use("/api/user", userRoutes);
 
-app.use("/api/room", chatRoomRoutes);
-app.use("/api/message", chatMessageRoutes);
+// app.use("/api/user", VerifyToken, userRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/room", VerifyToken, chatRoomRoutes);
+app.use("/api/message", VerifyToken, chatMessageRoutes);
 
+// 👇 ADD THIS ABOVE app.listen
+app.get("/", (req, res) => {
+  res.send("Chat server running 🚀");
+});
+
+// Server
+const PORT = process.env.PORT || 3001;
+//8080
 const server = app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
 
+// Socket.io
+// const io = new Server(server, {
+//   cors: {
+//     origin: "http://localhost:3000",
+//     credentials: true,
+//   },
+// });
+
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "http://localhost:3002",
+    methods: ["GET", "POST"],
     credentials: true,
   },
 });
@@ -70,3 +175,70 @@ io.on("connection", (socket) => {
     socket.emit("getUsers", Array.from(onlineUsers));
   });
 });
+
+
+// import express from "express";
+// import cors from "cors";
+// import dotenv from "dotenv";
+// import { Server } from "socket.io";
+
+// import "./config/mongo.js";
+// import { VerifySocketToken } from "./middlewares/VerifyToken.js";
+
+// import chatRoomRoutes from "./routes/chatRoom.js";
+// import chatMessageRoutes from "./routes/chatMessage.js";
+// import userRoutes from "./routes/user.js";
+
+// dotenv.config();
+
+// const app = express();
+
+// app.use(cors());
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: false }));
+
+// // ✅ ROUTES
+// app.use("/api/room", chatRoomRoutes);
+// app.use("/api/message", chatMessageRoutes);
+// app.use("/api/user", userRoutes);
+
+// const PORT = process.env.PORT || 3001;
+// const server = app.listen(PORT, () => {
+//   console.log(`Server running on ${PORT}`);
+// });
+
+// // SOCKET
+// const io = new Server(server, {
+//   cors: {
+//     origin: "http://localhost:3000",
+//     credentials: true,
+//   },
+// });
+
+// io.use(VerifySocketToken);
+
+// global.onlineUsers = new Map();
+
+// io.on("connection", (socket) => {
+//   socket.on("addUser", (userId) => {
+//     onlineUsers.set(userId, socket.id);
+//     socket.emit("getUsers", Array.from(onlineUsers));
+//   });
+
+//   socket.on("sendMessage", ({ senderId, receiverId, message }) => {
+//     const sendUserSocket = onlineUsers.get(receiverId);
+//     if (sendUserSocket) {
+//       socket.to(sendUserSocket).emit("getMessage", {
+//         senderId,
+//         message,
+//       });
+//     }
+//   });
+
+//   socket.on("disconnect", () => {
+//     for (let [key, value] of onlineUsers.entries()) {
+//       if (value === socket.id) onlineUsers.delete(key);
+//     }
+//     socket.emit("getUsers", Array.from(onlineUsers));
+//   });
+// });

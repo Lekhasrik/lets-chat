@@ -60,3 +60,46 @@ export function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
+
+// import { createContext, useContext, useEffect, useState, useMemo } from "react";
+// import axios from "axios";
+
+// const AuthContext = createContext();
+
+// export const AuthProvider = ({ children }) => {
+//   const [user, setUser] = useState(null);
+//   const [users, setUsers] = useState([]); // ✅ MUST be array
+//   const [loading, setLoading] = useState(true);
+
+//   useEffect(() => {
+//     const fetchUsers = async () => {
+//       try {
+//         const res = await axios.get("http://localhost:3001/api/users");
+//         setUsers(res.data || []); // ✅ safety
+//       } catch (err) {
+//         console.error("Fetch users error:", err);
+//         setUsers([]); // ✅ fallback
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchUsers();
+//   }, []); // ✅ RUN ONLY ONCE
+
+//   const value = useMemo(() => ({
+//     user,
+//     setUser,
+//     users,
+//     setUsers,
+//     loading
+//   }), [user, users, loading]);
+
+//   return (
+//     <AuthContext.Provider value={value}>
+//       {children}
+//     </AuthContext.Provider>
+//   );
+// };
+
+// export const useAuth = () => useContext(AuthContext);

@@ -32,7 +32,7 @@ export default function ChatForm(props) {
         <Picker className="dark:bg-gray-900" onEmojiClick={handleEmojiClick} />
       )}
       <form onSubmit={handleFormSubmit}>
-        <div className="flex items-center justify-between w-full p-3 bg-white border-b border-gray-200 dark:bg-gray-900 dark:border-gray-700">
+        {/* <div className="flex items-center justify-between w-full p-3 bg-white border-b border-gray-200 dark:bg-gray-900 dark:border-gray-700">
           <button
             onClick={(e) => {
               e.preventDefault();
@@ -60,7 +60,25 @@ export default function ChatForm(props) {
               aria-hidden="true"
             />
           </button>
-        </div>
+        </div> */}
+
+        <div className="flex items-center gap-2 p-4 bg-white dark:bg-slate-900 border-t">
+  <button onClick={(e) => { e.preventDefault(); setShowEmojiPicker(!showEmojiPicker); }}>
+    <EmojiHappyIcon className="h-6 w-6 text-blue-600" />
+  </button>
+
+  <input
+    value={message}
+    onChange={(e) => setMessage(e.target.value)}
+    placeholder="Type a message..."
+    className="flex-1 px-4 py-2 rounded-full bg-gray-100 dark:bg-slate-800 outline-none"
+  />
+
+  <button type="submit" className="bg-blue-600 p-3 rounded-full">
+    <PaperAirplaneIcon className="h-5 w-5 text-white rotate-90" />
+  </button>
+</div>
+
       </form>
     </div>
   );

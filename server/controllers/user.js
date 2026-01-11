@@ -9,7 +9,14 @@ export const getAllUsers = async (req, res) => {
 
     userRecords.users.forEach((user) => {
       const { uid, email, displayName, photoURL } = user;
-      users.push({ uid, email, displayName, photoURL });
+      //users.push({ uid, email, displayName, photoURL });
+      users.push({
+  uid,
+  email,
+  name: displayName || email.split("@")[0], // fallback
+  photoURL
+});
+
     });
     res.status(200).json(users);
   } catch (error) {
@@ -17,14 +24,35 @@ export const getAllUsers = async (req, res) => {
   }
 };
 
+// export const getUser = async (req, res) => {
+//   try {
+//     const userRecord = await auth.getUser(req.params.userId);
+
+//     const { uid, email, displayName, photoURL } = userRecord;
+
+//     res.status(200).json({ uid, email, displayName, photoURL });
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 export const getUser = async (req, res) => {
   try {
     const userRecord = await auth.getUser(req.params.userId);
 
     const { uid, email, displayName, photoURL } = userRecord;
 
-    res.status(200).json({ uid, email, displayName, photoURL });
+    res.status(200).json({
+      uid,
+      email,
+      name: displayName || email.split("@")[0],
+      photoURL
+    });
   } catch (error) {
-    console.log(error);
+    console.error("Firebase getUser error:", error.message);
+
+    return res.status(404).json({
+      message: "User not found in Firebase",
+    });
   }
 };
+

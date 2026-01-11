@@ -107,8 +107,12 @@ export default function ChatLayout() {
   };
 
   return (
-    <div className="container mx-auto">
-      <div className="min-w-full bg-white border-x border-b border-gray-200 dark:bg-gray-900 dark:border-gray-700 rounded lg:grid lg:grid-cols-3">
+    // <div className="container mx-auto">
+    //   <div className="min-w-full bg-white border-x border-b border-gray-200 dark:bg-gray-900 dark:border-gray-700 rounded lg:grid lg:grid-cols-3">
+
+    <div className="container mx-auto py-6">
+     <div className="min-w-full h-[90vh] bg-white dark:bg-slate-900 rounded-2xl shadow-xl grid grid-cols-3 overflow-hidden">
+
         <div className="bg-white border-r border-gray-200 dark:bg-gray-900 dark:border-gray-700 lg:col-span-1">
           <SearchUsers handleSearch={handleSearch} />
 
